@@ -9,21 +9,30 @@ const getClient = (context) => {
     return julesApi.createClient(context.session.apiKey);
 };
 
+// Higher-order function to handle errors
+const withErrorHandling = (toolName, fn) => {
+    return async (...args) => {
+        try {
+            return await fn(...args);
+        } catch (error) {
+            if (error instanceof UserError) {
+                throw error;
+            }
+            throw new UserError(`Error in ${toolName}: ${error.message}`);
+        }
+    };
+};
+
 export const addTools = (server) => {
     server.addTool({
         name: 'list_sources',
         description: 'List available sources',
         parameters: z.object({}),
-        execute: async (args, context) => {
-            try {
-                const client = getClient(context);
-                const sources = await julesApi.listSources(client);
-                return JSON.stringify(sources, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error listing sources: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('list_sources', async (args, context) => {
+            const client = getClient(context);
+            const sources = await julesApi.listSources(client);
+            return JSON.stringify(sources, null, 2);
+        }),
     });
     server.addTool({
         name: 'get_source',
@@ -31,16 +40,11 @@ export const addTools = (server) => {
         parameters: z.object({
             sourceName: z.string(),
         }),
-        execute: async ({ sourceName }, context) => {
-            try {
-                const client = getClient(context);
-                const source = await julesApi.getSource(client, sourceName);
-                return JSON.stringify(source, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error getting source: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('get_source', async ({ sourceName }, context) => {
+            const client = getClient(context);
+            const source = await julesApi.getSource(client, sourceName);
+            return JSON.stringify(source, null, 2);
+        }),
     });
     server.addTool({
         name: 'get_session',
@@ -48,16 +52,11 @@ export const addTools = (server) => {
         parameters: z.object({
             sessionId: z.string(),
         }),
-        execute: async ({ sessionId }, context) => {
-            try {
-                const client = getClient(context);
-                const session = await julesApi.getSession(client, sessionId);
-                return JSON.stringify(session, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error getting session: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('get_session', async ({ sessionId }, context) => {
+            const client = getClient(context);
+            const session = await julesApi.getSession(client, sessionId);
+            return JSON.stringify(session, null, 2);
+        }),
     });
     server.addTool({
         name: 'create_session',
@@ -67,31 +66,21 @@ export const addTools = (server) => {
             source: z.string(),
             requirePlanApproval: z.boolean().optional(),
         }),
-        execute: async ({ prompt, source, requirePlanApproval }, context) => {
-            try {
-                const client = getClient(context);
-                const session = await julesApi.createSession(client, prompt, source, requirePlanApproval);
-                return JSON.stringify(session, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error creating session: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('create_session', async ({ prompt, source, requirePlanApproval }, context) => {
+            const client = getClient(context);
+            const session = await julesApi.createSession(client, prompt, source, requirePlanApproval);
+            return JSON.stringify(session, null, 2);
+        }),
     });
     server.addTool({
         name: 'list_sessions',
         description: 'List all sessions',
         parameters: z.object({}),
-        execute: async (args, context) => {
-            try {
-                const client = getClient(context);
-                const sessions = await julesApi.listSessions(client);
-                return JSON.stringify(sessions, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error listing sessions: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('list_sessions', async (args, context) => {
+            const client = getClient(context);
+            const sessions = await julesApi.listSessions(client);
+            return JSON.stringify(sessions, null, 2);
+        }),
     });
     server.addTool({
         name: 'approve_plan',
@@ -99,16 +88,11 @@ export const addTools = (server) => {
         parameters: z.object({
             sessionId: z.string(),
         }),
-        execute: async ({ sessionId }, context) => {
-            try {
-                const client = getClient(context);
-                const result = await julesApi.approvePlan(client, sessionId);
-                return JSON.stringify(result, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error approving plan: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('approve_plan', async ({ sessionId }, context) => {
+            const client = getClient(context);
+            const result = await julesApi.approvePlan(client, sessionId);
+            return JSON.stringify(result, null, 2);
+        }),
     });
     server.addTool({
         name: 'list_activities',
@@ -116,16 +100,11 @@ export const addTools = (server) => {
         parameters: z.object({
             sessionId: z.string(),
         }),
-        execute: async ({ sessionId }, context) => {
-            try {
-                const client = getClient(context);
-                const activities = await julesApi.listActivities(client, sessionId);
-                return JSON.stringify(activities, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error listing activities: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('list_activities', async ({ sessionId }, context) => {
+            const client = getClient(context);
+            const activities = await julesApi.listActivities(client, sessionId);
+            return JSON.stringify(activities, null, 2);
+        }),
     });
     server.addTool({
         name: 'send_message',
@@ -134,15 +113,10 @@ export const addTools = (server) => {
             sessionId: z.string(),
             prompt: z.string(),
         }),
-        execute: async ({ sessionId, prompt }, context) => {
-            try {
-                const client = getClient(context);
-                const result = await julesApi.sendMessage(client, sessionId, prompt);
-                return JSON.stringify(result, null, 2);
-            }
-            catch (error) {
-                throw new UserError(`Error sending message: ${error.message}`);
-            }
-        },
+        execute: withErrorHandling('send_message', async ({ sessionId, prompt }, context) => {
+            const client = getClient(context);
+            const result = await julesApi.sendMessage(client, sessionId, prompt);
+            return JSON.stringify(result, null, 2);
+        }),
     });
 };
