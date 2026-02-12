@@ -16,9 +16,20 @@ const withErrorHandling = (toolName, fn) => {
             return await fn(...args);
         } catch (error) {
             if (error instanceof UserError) {
+                // If it's already a UserError, just re-throw it as it's intended for the client
                 throw error;
             }
-            throw new UserError(`Error in ${toolName}: ${error.message}`);
+
+            // Log the full error details on the server for debugging
+            console.error(JSON.stringify({
+                level: 'error',
+                message: `Error in ${toolName}`,
+                error: error.message,
+                stack: error.stack,
+            }));
+
+            // Throw a generic error to the client to avoid leaking sensitive details
+            throw new UserError(`An internal error occurred while executing ${toolName}. Please check server logs for details.`);
         }
     };
 };

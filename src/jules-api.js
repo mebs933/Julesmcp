@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const JULES_API_BASE_URL = 'https://jules.googleapis.com/v1alpha';
+const JULES_API_BASE_URL = process.env.JULES_API_BASE_URL || 'https://jules.googleapis.com/v1alpha';
 
 export const createClient = (apiKey) => {
     return axios.create({
