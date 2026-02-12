@@ -18,7 +18,7 @@ export const listSources = async (client) => {
 };
 
 export const getSource = async (client, sourceName) => {
-    const response = await client.get(`/${sourceName}`);
+    const response = await client.get(`/${encodeURIComponent(sourceName)}`);
     return response.data;
 };
 
@@ -43,22 +43,22 @@ export const listSessions = async (client) => {
 };
 
 export const getSession = async (client, sessionId) => {
-    const response = await client.get(`/sessions/${sessionId}`);
+    const response = await client.get(`/sessions/${encodeURIComponent(sessionId)}`);
     return response.data;
 };
 
 export const approvePlan = async (client, sessionId) => {
-    const response = await client.post(`/sessions/${sessionId}:approvePlan`);
+    const response = await client.post(`/sessions/${encodeURIComponent(sessionId)}:approvePlan`);
     return response.data;
 };
 
 export const listActivities = async (client, sessionId) => {
-    const response = await client.get(`/sessions/${sessionId}/activities`);
+    const response = await client.get(`/sessions/${encodeURIComponent(sessionId)}/activities`);
     return response.data;
 };
 
 export const sendMessage = async (client, sessionId, prompt) => {
-    const response = await client.post(`/sessions/${sessionId}:sendMessage`, {
+    const response = await client.post(`/sessions/${encodeURIComponent(sessionId)}:sendMessage`, {
         prompt,
     });
     return response.data;

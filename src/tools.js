@@ -31,7 +31,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('list_sources', async (args, context) => {
             const client = getClient(context);
             const sources = await julesApi.listSources(client);
-            return JSON.stringify(sources, null, 2);
+            return sources;
         }),
     });
     server.addTool({
@@ -43,7 +43,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('get_source', async ({ sourceName }, context) => {
             const client = getClient(context);
             const source = await julesApi.getSource(client, sourceName);
-            return JSON.stringify(source, null, 2);
+            return source;
         }),
     });
     server.addTool({
@@ -55,7 +55,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('get_session', async ({ sessionId }, context) => {
             const client = getClient(context);
             const session = await julesApi.getSession(client, sessionId);
-            return JSON.stringify(session, null, 2);
+            return session;
         }),
     });
     server.addTool({
@@ -69,7 +69,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('create_session', async ({ prompt, source, requirePlanApproval }, context) => {
             const client = getClient(context);
             const session = await julesApi.createSession(client, prompt, source, requirePlanApproval);
-            return JSON.stringify(session, null, 2);
+            return session;
         }),
     });
     server.addTool({
@@ -79,7 +79,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('list_sessions', async (args, context) => {
             const client = getClient(context);
             const sessions = await julesApi.listSessions(client);
-            return JSON.stringify(sessions, null, 2);
+            return sessions;
         }),
     });
     server.addTool({
@@ -91,7 +91,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('approve_plan', async ({ sessionId }, context) => {
             const client = getClient(context);
             const result = await julesApi.approvePlan(client, sessionId);
-            return JSON.stringify(result, null, 2);
+            return result;
         }),
     });
     server.addTool({
@@ -103,7 +103,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('list_activities', async ({ sessionId }, context) => {
             const client = getClient(context);
             const activities = await julesApi.listActivities(client, sessionId);
-            return JSON.stringify(activities, null, 2);
+            return activities;
         }),
     });
     server.addTool({
@@ -116,7 +116,7 @@ export const addTools = (server) => {
         execute: withErrorHandling('send_message', async ({ sessionId, prompt }, context) => {
             const client = getClient(context);
             const result = await julesApi.sendMessage(client, sessionId, prompt);
-            return JSON.stringify(result, null, 2);
+            return result;
         }),
     });
 };
