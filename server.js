@@ -28,6 +28,7 @@ server.start({
     transportType: 'httpStream',
     httpStream: {
         port: port,
+        host: '0.0.0.0',
         endpoint: '/sse',
     }
 });
